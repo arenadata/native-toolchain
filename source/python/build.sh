@@ -50,7 +50,7 @@ if needs_build_package ; then
   export LD_LIBRARY_PATH="${BZIP2_ROOT}/lib:${LD_LIBRARY_PATH:-}"
   # fastbinary expects ucs4. Without this, we get:
   # ImportError: /mnt/build/thrift-0.11.0-p2/python/lib/python2.7/site-packages/thrift/protocol/fastbinary.so: undefined symbol: PyUnicodeUCS2_DecodeUTF8
-  wrap ./configure --prefix=$LOCAL_INSTALL --enable-unicode=ucs4
+  wrap ./configure --prefix=$LOCAL_INSTALL
   wrap make -j${BUILD_THREADS:-4}
   wrap make install
   # Assert that important packages were built successfully

@@ -104,11 +104,13 @@ if [ ! -f $SOURCE_DIR/check/$PACKAGE_STRING ]; then
   # binutils is on the PATH. It's unclear what is going on, but this
   # forces it to use our linker.
   export LD=${BUILD_DIR}/binutils-${BINUTILS_VERSION}/bin/ld
-
-  wrap ../gcc-$GCC_VERSION/configure --prefix=$LOCAL_INSTALL \
+  
+  export GCC_VERSION=8
+  wrap ../gcc-$BUILD_GCC_VERSION/configure --prefix=$LOCAL_INSTALL \
     --enable-languages=c,c++ --disable-multilib \
     --with-build-config=bootstrap-lto
   wrap make -j${BUILD_THREADS:-4} --load-average=${BUILD_THREADS:-4}
   wrap make install
+  export GCC_VERSION=$BUILD_GCC_VERSION
   finalize_package_build $PACKAGE $PACKAGE_VERSION
 fi

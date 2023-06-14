@@ -29,9 +29,11 @@ if needs_build_package ; then
   #   linkers and utilities on various Linux distributions). This can be reenabled with
   #   the assembler flag -mrelax-relocations=yes if desired.
   #   see https://sourceware.org/bugzilla/show_bug.cgi?id=19520 and IMPALA-5025.
+  export GCC_VERSION=8
   wrap ./configure --enable-gold --enable-plugins --disable-x86-relax-relocations \
       --prefix=$LOCAL_INSTALL
   wrap make -j$BUILD_THREADS
   wrap make install
+  export GCC_VERSION=$BUILD_GCC_VERSION
   finalize_package_build $PACKAGE $PACKAGE_VERSION
 fi

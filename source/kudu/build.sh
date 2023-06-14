@@ -25,6 +25,11 @@ set -euo pipefail
 
 THIS_DIR="$(cd "$(dirname "$0")" && pwd)"
 
+unset AUTOCONF_VERSION 
+unset AUTOMAKE_VERSION
+unset LIBTOOL_VERSION
+
+
 # Returns success if Kudu can be built on this platform.
 function is_supported_platform {
   set +u
@@ -196,3 +201,8 @@ function install_kudu {
 
 # Run build or a requested function.
 ${1-build}
+
+export AUTOMAKE_VERSION=$AUTOMAKE_VERSION_BUILD
+export AUTOCONF_VERSION=$AUTOCONF_VERSION_BUILD
+export LIBTOOL_VERSION=2.4.2
+

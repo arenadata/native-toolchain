@@ -35,6 +35,8 @@ if needs_build_package ; then
   OPENSSL_ROOT="${BUILD_DIR}"/openssl-"${OPENSSL_VERSION}"
   ZLIB_ROOT="${BUILD_DIR}"/zlib-"${ZLIB_VERSION}"
   PYTHON_ROOT="${BUILD_DIR}"/python-"${PYTHON_VERSION}"
+  unset AUTOCONF_VERSION 
+  unset AUTOMAKE_VERSION
 
   read OPENSSL_MAJ_VER OPENSSL_MIN_VER OPENSSL_PATCH_VER <<< `openssl version |  \
       sed -r 's/^OpenSSL ([0-9]+)\.([0-9]+)\.([0-9a-z]+).*/\1 \2 \3/'`
@@ -54,7 +56,6 @@ if needs_build_package ; then
   if [[ -d "${PIC_LIB_PATH:-}" ]]; then
     PIC_LIB_OPTIONS="--with-zlib=${PIC_LIB_PATH}"
   fi
-
   if [[ "${OSTYPE}" == "darwin"* ]]; then
     wrap aclocal -I ./aclocal
     wrap glibtoolize --copy
@@ -130,3 +131,6 @@ if needs_build_package ; then
     wrap python -c 'import thrift.protocol.fastbinary'
   finalize_package_build "${PACKAGE}" "${PACKAGE_VERSION}"
 fi
+
+export AUTOMAKE_VERSION=$AUTOMAKE_VERSION_BUILD
+export AUTOCONF_VERSION=$AUTOCONF_VERSION_BUILD

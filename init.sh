@@ -89,6 +89,7 @@ export SYSTEM_GCC
 
 : ${GCC_VERSION=10.4.0}
 export GCC_VERSION
+export BUILD_GCC_VERSION=$GCC_VERSION
 
 : ${SYSTEM_CMAKE=0}
 export SYSTEM_CMAKE
@@ -101,9 +102,11 @@ export SYSTEM_AUTOTOOLS
 
 : ${AUTOCONF_VERSION=2.69}
 export AUTOCONF_VERSION
+export AUTOCONF_VERSION_BUILD=$AUTOCONF_VERSION
 
 : ${AUTOMAKE_VERSION=1.14.1-p1}
 export AUTOMAKE_VERSION
+export AUTOMAKE_VERSION_BUILD=$AUTOMAKE_VERSION
 
 : ${LIBTOOL_VERSION=2.4.2}
 export LIBTOOL_VERSION
@@ -182,6 +185,7 @@ if [[ "$OSTYPE" =~ ^linux ]]; then
     debian*) OS_NAME=debian;;
     suse*) OS_NAME=suse;;
     ubuntu*) OS_NAME=ubuntu;;
+    alt*) OS_NAME=alt;;
     *) echo "Warning: Unable to detect operating system" 1>&2
        OS_NAME=unknown;;
   esac

@@ -37,6 +37,7 @@ if needs_build_package ; then
   tar -xjf "gmp-${GMP_VERSION}.tar.bz2"
   pushd "gmp-${GMP_VERSION}"
   GMP_INSTALL=$(pwd)/install
+  export GCC_VERSION=8
   ./configure --prefix=${GMP_INSTALL} > $BUILD_LOG 2>&1
   wrap make -j${BUILD_THREADS:-4} install
   popd
@@ -53,6 +54,6 @@ if needs_build_package ; then
 
   wrap make -j${BUILD_THREADS:-4}
   wrap make install
-
+  export GCC_VERSION=$BUILD_GCC_VERSION
   finalize_package_build $PACKAGE $PACKAGE_VERSION
 fi
