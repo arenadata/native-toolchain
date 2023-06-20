@@ -320,21 +320,25 @@ FLATBUFFERS_VERSION=1.9.0-p1 $SOURCE_DIR/source/flatbuffers/build.sh
 ################################################################################
 # Build Kudu
 ################################################################################
-(
-  export BOOST_VERSION=1.74.0-p1
-  # IMPALA-11441: KUDU-1644 caused a regression in an Impala upsert test,
-  # so this is the equivalent of upstream Kudu dc4031f693 with KUDU-1644
-  # reverted.
-  export KUDU_VERSION=956093dd9d
-  export KUDU_GITHUB_URL=https://github.com/joemcdonnell/kudu.git
-  export PYTHON_VERSION=2.7.16
-  if $SOURCE_DIR/source/kudu/build.sh is_supported_platform; then
-    $SOURCE_DIR/source/kudu/build.sh build
-  else
-    build_fake_package kudu
-  fi
-)
-
+#(
+#  export BOOST_VERSION=1.74.0-p1
+#  # IMPALA-11441: KUDU-1644 caused a regression in an Impala upsert test,
+#  # so this is the equivalent of upstream Kudu dc4031f693 with KUDU-1644
+#  # reverted.
+#  export KUDU_VERSION=956093dd9d
+#  export KUDU_GITHUB_URL=https://github.com/joemcdonnell/kudu.git
+#  export PYTHON_VERSION=2.7.16
+#  if $SOURCE_DIR/source/kudu/build.sh is_supported_platform; then
+#    $SOURCE_DIR/source/kudu/build.sh build
+#  else
+#    build_fake_package kudu
+#  fi
+#)
+export BOOST_VERSION=1.74.0-p1
+export KUDU_VERSION=956093dd9d
+export KUDU_GITHUB_URL=https://github.com/joemcdonnell/kudu.git
+export PYTHON_VERSION=2.7.16
+build_fake_package kudu
 ################################################################################
 # Build TPC-H
 ################################################################################
