@@ -30,28 +30,11 @@ if needs_build_package ; then
 
   setup_package_build "${PACKAGE}" "${PACKAGE_VERSION}"
 
-  BISON_ROOT="${BUILD_DIR}"/bison-"${BISON_VERSION}"
   BOOST_ROOT="${BUILD_DIR}"/boost-"${BOOST_VERSION}"
-  OPENSSL_ROOT="${BUILD_DIR}"/openssl-"${OPENSSL_VERSION}"
   ZLIB_ROOT="${BUILD_DIR}"/zlib-"${ZLIB_VERSION}"
   PYTHON_ROOT="${BUILD_DIR}"/python-"${PYTHON_VERSION}"
   unset AUTOCONF_VERSION 
   unset AUTOMAKE_VERSION
-
-  read OPENSSL_MAJ_VER OPENSSL_MIN_VER OPENSSL_PATCH_VER <<< `openssl version |  \
-      sed -r 's/^OpenSSL ([0-9]+)\.([0-9]+)\.([0-9a-z]+).*/\1 \2 \3/'`
-  # Build with system openssl if the system openssl version >= 1.0.1. Build with the
-  # bundled openssl otherwise.
-  if [[ "${PRODUCTION}" -eq "0" || "${OSTYPE}" == "darwin"* || \
-      "${OPENSSL_MAJ_VER}" == "0" || \
-      ( "${OPENSSL_MIN_VER}" ==  "0" &&  "$OPENSSL_PATCH_VER" < "1" ) ]]; then
-    OPENSSL_ARGS=--with-openssl="${OPENSSL_ROOT}"
-    export LDFLAGS="-L${OPENSSL_ROOT}/lib ${LDFLAGS}"
-    # This is required for autoconf to detect "GNU libc compatible malloc"
-    export LD_LIBRARY_PATH="${OPENSSL_ROOT}/lib:${LD_LIBRARY_PATH:-}"
-  else
-    OPENSSL_ARGS=
-  fi
 
   if [[ -d "${PIC_LIB_PATH:-}" ]]; then
     PIC_LIB_OPTIONS="--with-zlib=${PIC_LIB_PATH}"
@@ -70,7 +53,7 @@ if needs_build_package ; then
   # LEXLIB= is a Workaround /usr/lib64/libfl.so: undefined reference to `yylex'
   PYTHON="${PYTHON_ROOT}"/bin/python
   PY_PREFIX="${LOCAL_INSTALL}"/python
-  PATH="${BISON_ROOT}"/bin:"${PATH}" \
+  PATH="${PATH}" \
     PYTHON="${PYTHON}" \
     PY_PREFIX="${PY_PREFIX}" \
     wrap ./configure \
@@ -96,7 +79,6 @@ if needs_build_package ; then
     --with-qt4=no \
     --with-libevent=no \
     ${PIC_LIB_OPTIONS:-} \
-    ${OPENSSL_ARGS} \
     ${CONFIGURE_FLAG_BUILD_SYS}
   # The error code is zero if one or more libraries can be built. To ensure that C++
   # and python libraries are built the output should be checked.
@@ -109,16 +91,16 @@ if needs_build_package ; then
     exit 1
   fi
   add_gcc_to_ld_library_path
-  wrap make install # Thrift 0.9.0 doesn't build with -j${BUILD_THREADS}
+  wrap make -j"${BUILD_THREADS:-4}" install
   cd contrib/fb303
   rm -f config.cache
   chmod 755 ./bootstrap.sh
   wrap ./bootstrap.sh --with-boost="${BOOST_ROOT}"
   wrap chmod 755 configure
-  CPPFLAGS="-I${LOCAL_INSTALL}/include" PY_PREFIX="${LOCAL_INSTALL}"/python PYTHON="${PYTHON_ROOT}"/bin/python wrap ./configure \
+  CPPFLAGS="-I${LOCAL_INSTALL}/include" PY_PREFIX="${PY_PREFIX}" PYTHON="${PYTHON}" wrap ./configure \
     --with-boost="${BOOST_ROOT}" \
     --with-java=no --with-php=no --with-cpp=no --prefix="${LOCAL_INSTALL}" \
-    --with-thriftpath="${LOCAL_INSTALL}" ${OPENSSL_ARGS}
+    --with-thriftpath="${LOCAL_INSTALL}"
   wrap make -j"${BUILD_THREADS}" install
 
   # Fake the share/fb303/if
@@ -127,8 +109,8 @@ if needs_build_package ; then
 
   # Ensure that we've compiled the fastbinary shared object
   # Some distros place site-packages on lib and others do so in lib64
-  PYTHONPATH=$(find $PY_PREFIX -type d -name 'site-packages' -type d|tr '\n' ':') \
-    wrap python -c 'import thrift.protocol.fastbinary'
+  PYTHONPATH=$(find "${PY_PREFIX}" -type d -name 'site-packages' -type d|tr '\n' ':') \
+    wrap "${PYTHON}" -c 'import thrift.protocol.fastbinary'
   finalize_package_build "${PACKAGE}" "${PACKAGE_VERSION}"
 fi
 

@@ -19,8 +19,6 @@ set -o pipefail
 
 # This script exports the following environment variables:
 #  - ARCH_NAME
-#  - AUTOCONF_VERSION
-#  - AUTOMAKE_VERSION
 #  - BINUTILS_VERSION
 #  - BUILD_LABEL
 #  - BUILD_THREADS
@@ -34,7 +32,6 @@ set -o pipefail
 #  - DOWNLOAD_CCACHE
 #  - FAIL_ON_PUBLISH
 #  - GCC_VERSION
-#  - LIBTOOL_VERSION
 #  - MACOSX_DEPLOYMENT_TARGET
 #  - OS_NAME
 #  - OS_VERSION
@@ -43,7 +40,6 @@ set -o pipefail
 #  - PUBLISH_DEPENDENCIES
 #  - RELEASE_NAME
 #  - SOURCE_DIR
-#  - SYSTEM_AUTOTOOLS
 #  - SYSTEM_CMAKE
 #  - SYSTEM_GCC
 #  - TOOLCHAIN_BUILD_ID
