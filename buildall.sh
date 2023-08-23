@@ -338,7 +338,8 @@ export BOOST_VERSION=1.74.0-p1
 export KUDU_VERSION=956093dd9d
 export KUDU_GITHUB_URL=https://github.com/joemcdonnell/kudu.git
 export PYTHON_VERSION=2.7.16
-build_fake_package kudu
+$SOURCE_DIR/source/kudu/build.sh build
+
 ################################################################################
 # Build TPC-H
 ################################################################################
