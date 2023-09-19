@@ -45,6 +45,7 @@ if needs_build_package ; then
     setup_package_build $PACKAGE $PACKAGE_VERSION
   fi
   add_gcc_to_ld_library_path
+  export CXXCPP_FOR_BUILD="$(pwd)/../../../build/gcc-10.4.0/bin/g++ -E"
   wrap ./configure --with-pic --prefix=$LOCAL_INSTALL
   wrap make -j${BUILD_THREADS:-4} install
   finalize_package_build $PACKAGE $PACKAGE_VERSION
