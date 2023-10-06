@@ -43,7 +43,7 @@ function popd() {
 # package-filename and the target download folder
 function download_dependency() {
   # S3 Base URL
-  local S3_BASE_PREFIX="https://native-toolchain.s3.amazonaws.com/source"
+  local S3_BASE_PREFIX="http://10.92.8.44/impala-toolchain/source"
   download_url "${S3_BASE_PREFIX}/${1}/${2}" "${3}/${2}"
 }
 
