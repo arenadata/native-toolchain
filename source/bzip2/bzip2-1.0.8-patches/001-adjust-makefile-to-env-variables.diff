@@ -55,4 +55,14 @@
 +		entities.xml manual.xml
  
  manual: manual.html manual.ps manual.pdf
- 
+
+--- bzip2-1.0.8/Makefile-libbz2_so  2023-09-19 11:35:21.025235640 +0000
++++ bzip2-1.0.6/Makefile-libbz2_so-orig     2023-09-19 11:35:03.832890741 +0000
+@@ -22,7 +22,7 @@
+
+
+ SHELL=/bin/sh
+-CC=gcc
++CC ?= gcc
+ BIGFILES=-D_FILE_OFFSET_BITS=64
+ CFLAGS=-fpic -fPIC -Wall -Winline -O2 -g $(BIGFILES)
