@@ -217,11 +217,7 @@ FLATBUFFERS_VERSION=1.9.0-p1 $SOURCE_DIR/source/flatbuffers/build.sh
 (
   export BOOST_VERSION=1.74.0-p1
   export KUDU_VERSION=e742f86f6d
-  if $SOURCE_DIR/source/kudu/build.sh is_supported_platform; then
-    $SOURCE_DIR/source/kudu/build.sh build
-  else
-    build_fake_package kudu
-  fi
+  $SOURCE_DIR/source/kudu/build.sh build
 )
 
 ################################################################################
