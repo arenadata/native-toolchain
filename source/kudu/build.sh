@@ -76,6 +76,8 @@ function build {
     git clone $KUDU_GITHUB_URL $KUDU_SOURCE_DIR
     pushd $KUDU_SOURCE_DIR
     git checkout $PACKAGE_VERSION
+    #TODO: need to be removed in version 4.5
+    sed -i 's/compile "cz.alenkacz:gradle-scalafmt:1.14.0"/compile "gradle.plugin.cz.alenkacz:gradle-scalafmt:1.14.0"/' java/buildSrc/build.gradle
     popd
   fi
 
