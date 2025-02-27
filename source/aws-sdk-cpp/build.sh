@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright 2024 Cloudera Inc.
+# Copyright 2025 Cloudera Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,21 +24,22 @@ source $SOURCE_DIR/functions.sh
 THIS_DIR="$( cd "$( dirname "$0" )" && pwd )"
 prepare $THIS_DIR
 
-# Turn off debug info for mold by adding -g0, as it is just a build utility.
-CXXFLAGS="${CXXFLAGS} -g0"
-CFLAGS="${CFLAGS} -g0"
-
 if needs_build_package ; then
-  # Download the dependency from S3
   download_dependency $PACKAGE "${PACKAGE_STRING}.tar.gz" $THIS_DIR
-
   setup_package_build $PACKAGE $PACKAGE_VERSION
-
-  mkdir -p build
-  pushd build
-  wrap cmake -DCMAKE_INSTALL_PREFIX=$LOCAL_INSTALL -DCMAKE_BUILD_TYPE=Release ..
+  # This is required for downloading some dependencies.
+  ORIGINAL_PATH=$PATH
+  CURL_PATH=${BUILD_DIR}/curl-${CURL_VERSION}/bin
+  export PATH="$CURL_PATH:$PATH"
+  wrap ./prefetch_crt_dependency.sh
+  export PATH=$ORIGINAL_PATH
+  # Build only the required bedrock components.
+  wrap cmake -DCMAKE_INSTALL_PREFIX=$LOCAL_INSTALL -DCMAKE_BUILD_TYPE=RELEASE \
+    -DBUILD_ONLY="bedrock-runtime" -DENABLE_TESTING="OFF" -DUSE_OPENSSL="ON" \
+    -DBUILD_SHARED_LIBS="OFF" -DCPP_STANDARD="17" \
+    -DCURL_LIBRARY=${BUILD_DIR}/curl-${CURL_VERSION}/lib/libcurl.so \
+    -DCURL_INCLUDE_DIR=${BUILD_DIR}/curl-${CURL_VERSION}/include \
+    -DZLIB_ROOT=${BUILD_DIR}/zlib-${ZLIB_VERSION}
   wrap make VERBOSE=1 -j${BUILD_THREADS:-4} install
-  popd
-
   finalize_package_build $PACKAGE $PACKAGE_VERSION
 fi

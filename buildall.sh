@@ -64,8 +64,8 @@ export -n BZIP2_VERSION
 # Build LLVM 3.7+ with and without assertions. For LLVM 3.7+, the default is a
 # release build with no assertions.
 (
-  LLVM_VERSION=5.0.1-p7 $SOURCE_DIR/source/llvm/build.sh
-  LLVM_VERSION=5.0.1-asserts-p7 $SOURCE_DIR/source/llvm/build.sh
+  LLVM_VERSION=5.0.1-p8 $SOURCE_DIR/source/llvm/build.sh
+  LLVM_VERSION=5.0.1-asserts-p8 $SOURCE_DIR/source/llvm/build.sh
 )
 
 ################################################################################
@@ -141,7 +141,7 @@ GFLAGS_VERSION=2.2.0-p2 GLOG_VERSION=0.3.5-p3 $SOURCE_DIR/source/glog/build.sh
 GTEST_VERSION=1.6.0 $SOURCE_DIR/source/gtest/build.sh
 
 # New versions of gtest are named googletest
-GOOGLETEST_VERSION=1.8.0 $SOURCE_DIR/source/googletest/build.sh
+GOOGLETEST_VERSION=1.14.0 $SOURCE_DIR/source/googletest/build.sh
 
 ################################################################################
 # Build Snappy
@@ -194,7 +194,7 @@ AVRO_VERSION=1.7.4-p5 $SOURCE_DIR/source/avro/build.sh
 ################################################################################
 # Build Rapidjson
 ################################################################################
-RAPIDJSON_VERSION=1.1.0 $SOURCE_DIR/source/rapidjson/build.sh
+RAPIDJSON_VERSION=1.1.0-p1 $SOURCE_DIR/source/rapidjson/build.sh
 
 ################################################################################
 # Build Libunwind
@@ -239,7 +239,6 @@ TPC_DS_VERSION=2.1.0-p1 $SOURCE_DIR/source/tpc-ds/build.sh
   export SNAPPY_VERSION=1.1.8
   export ZLIB_VERSION=1.2.13
   export ZSTD_VERSION=1.5.2
-  export GOOGLETEST_VERSION=1.8.0
   ORC_VERSION=1.7.9-p10 $SOURCE_DIR/source/orc/build.sh
 )
 
@@ -264,7 +263,7 @@ ARROW_VERSION=13.0.0 $SOURCE_DIR/source/arrow/build.sh
 
 # CURL
 ################################################################################
-CURL_VERSION=7.78.0 $SOURCE_DIR/source/curl/build.sh
+CURL_VERSION=8.10.1 $SOURCE_DIR/source/curl/build.sh
 
 # CALLONCEHACK
 ################################################################################
@@ -296,3 +295,11 @@ LIBPFM_VERSION=4.13.0 $SOURCE_DIR/source/libpfm/build.sh
 export LIBPFM_VERSION=4.13.0
 GOOGLEBENCHMARK_VERSION=1.8.3 $SOURCE_DIR/source/googlebenchmark/build.sh
 unset LIBPFM_VERSION
+
+# AWS-SDK-CPP
+################################################################################
+export CURL_VERSION=8.10.1
+export ZLIB_VERSION=1.3.1
+AWS_SDK_CPP_VERSION=1.11.485 $SOURCE_DIR/source/aws-sdk-cpp/build.sh
+unset CURL_VERSION
+unset ZLIB_VERSION

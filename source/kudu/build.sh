@@ -93,6 +93,13 @@ function build {
   [[ -f version.txt ]]
   echo $PACKAGE_VERSION > version.txt
 
+  # Workaround for IMPALA-13309: A Maven repository shut down and maven central only has
+  # gradle-scalafmt at a different artifact path. Patch build.gradle to use the working
+  # path. This won't match anything for newer Kudu versions that don't have this issue.
+  # NOTE: Remove this when we move to a newer Kudu.
+  sed -i 's#compile "cz.alenkacz:gradle-scalafmt#compile "gradle.plugin.cz.alenkacz:gradle-scalafmt#' \
+    java/buildSrc/build.gradle
+
   export GRADLE_USER_HOME="$(pwd)"
 
   # Kudu's dependencies are not in the toolchain. They could be added later.
@@ -112,7 +119,17 @@ function build {
     echo "Ninja is installed, disabling --load-average"
     LOAD_AVERAGE_ARGS=""
   fi
+  # When building Kudu's toolchain, debug symbols are not particularly useful
+  # for Impala development and they add substantial size to the Kudu binary.
+  # For example, compiling LLVM even with -g1 can add hundreds of MBs to the
+  # Kudu binary sizes. This turns off debug symbols for Kudu's toolchain.
+  STORE_CFLAGS=${CFLAGS}
+  STORE_CXXFLAGS=${CXXFLAGS}
+  CFLAGS="${CFLAGS} -g0"
+  CXXFLAGS="${CXXFLAGS} -g0"
   EXTRA_MAKEFLAGS="${LOAD_AVERAGE_ARGS}" wrap ./build-if-necessary.sh
+  CFLAGS=$STORE_CFLAGS
+  CXXFLAGS=$STORE_CXXFLAGS
   cd ..
 
   # Update the PATH to include Kudu's toolchain binaries.
@@ -127,7 +144,7 @@ function build {
       -DCMAKE_BUILD_TYPE=Release \
       -DNO_TESTS=1 \
       -DCMAKE_INSTALL_PREFIX="$RELEASE_INSTALL_DIR" ..
-  wrap make -j$BUILD_THREADS --load-average=${BUILD_THREADS}
+  wrap make VERBOSE=1 -j$BUILD_THREADS --load-average=${BUILD_THREADS}
   install_kudu "$RELEASE_INSTALL_DIR"
   popd
 
@@ -140,7 +157,7 @@ function build {
       -DKUDU_LINK=static \
       -DNO_TESTS=1 \
       -DCMAKE_INSTALL_PREFIX="$DEBUG_INSTALL_DIR" ..
-  wrap make -j$BUILD_THREADS --load-average=${BUILD_THREADS}
+  wrap make VERBOSE=1 -j$BUILD_THREADS --load-average=${BUILD_THREADS}
   install_kudu "$DEBUG_INSTALL_DIR"
   popd
 

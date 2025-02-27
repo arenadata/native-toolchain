@@ -24,6 +24,10 @@ source "${SOURCE_DIR}"/functions.sh
 THIS_DIR="$( cd "$( dirname "$0" )" && pwd )"
 prepare "${THIS_DIR}"
 
+# It can be useful to step through Thrift with a debugger. Turn on full debuginfo.
+CXXFLAGS="${CXXFLAGS} -g"
+CFLAGS="${CFLAGS} -g"
+
 if needs_build_package ; then
   # Download the dependency from S3
   download_dependency "${PACKAGE}" "${PACKAGE_STRING}.tar.gz" "${THIS_DIR}"
@@ -77,6 +81,9 @@ if needs_build_package ; then
     --with-go=no \
     --with-qt4=no \
     --with-libevent=no \
+    --with-rs=no \
+    --with-dotnetcore=no \
+    --with-netstd=no \
     ${PIC_LIB_OPTIONS:-} \
     ${CONFIGURE_FLAG_BUILD_SYS}
   # The error code is zero if one or more libraries can be built. To ensure that C++
@@ -90,7 +97,7 @@ if needs_build_package ; then
     exit 1
   fi
   add_gcc_to_ld_library_path
-  wrap make -j"${BUILD_THREADS:-4}" install
+  wrap make VERBOSE=1 -j"${BUILD_THREADS:-4}" install
   cd contrib/fb303
   rm -f config.cache
   chmod 755 ./bootstrap.sh
@@ -100,7 +107,7 @@ if needs_build_package ; then
     --with-boost="${BOOST_ROOT}" \
     --with-java=no --with-php=no --with-cpp=no --prefix="${LOCAL_INSTALL}" \
     --with-thriftpath="${LOCAL_INSTALL}"
-  wrap make -j"${BUILD_THREADS}" install
+  wrap make VERBOSE=1 -j"${BUILD_THREADS}" install
 
   # Fake the share/fb303/if
   mkdir -p ${LOCAL_INSTALL}/share/fb303/if

@@ -24,6 +24,10 @@ source $SOURCE_DIR/functions.sh
 THIS_DIR="$( cd "$( dirname "$0" )" && pwd )"
 prepare $THIS_DIR
 
+# Turn off debug info for CMake by adding -g0, as it is just a build utility.
+CXXFLAGS="${CXXFLAGS} -g0"
+CFLAGS="${CFLAGS} -g0"
+
 if needs_build_package ; then
   # Download the dependency from S3
   download_dependency $PACKAGE "${PACKAGE_STRING}.tar.gz" $THIS_DIR
@@ -36,7 +40,7 @@ if needs_build_package ; then
   #   desired behavior.
   wrap ./bootstrap --prefix=${LOCAL_INSTALL} --parallel=${BUILD_THREADS} \
     -- -DKWSYS_PROCESS_USE_SELECT=0 -DKWSYSPE_USE_SELECT=0
-  wrap make -j${BUILD_THREADS}
+  wrap make VERBOSE=1 -j${BUILD_THREADS}
   wrap make install
 
   finalize_package_build $PACKAGE $PACKAGE_VERSION

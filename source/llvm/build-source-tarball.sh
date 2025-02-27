@@ -77,9 +77,16 @@ function build_llvm() {
   local LLVM_BUILD_TYPE=Release
   if [[ "$PACKAGE_VERSION" =~ "-asserts" ]]; then
     LLVM_BUILD_TYPE=Release
-    EXTRA_CMAKE_ARGS+="-DLLVM_ENABLE_ASSERTIONS=true -DCMAKE_CXX_FLAGS=-g1"
+    EXTRA_CMAKE_ARGS+=" -DLLVM_ENABLE_ASSERTIONS=true"
+    # Always have minimal debug info for the asserts build
+    export CXXFLAGS="${CXXFLAGS} -g1"
   elif [[ "$PACKAGE_VERSION" =~ "-debug" ]]; then
     LLVM_BUILD_TYPE=Debug
+  else
+    # Turn off debug symbols for the regular release build. These symbols add 300+MB to
+    # Impala's binary size. Oddly enough, the -asserts build doesn't have a similar
+    # problem.
+    export CXXFLAGS="${CXXFLAGS} -g0"
   fi
 
   if [[ "$ARCH_NAME" == "ppc64le" ]]; then
@@ -174,11 +181,11 @@ function build_llvm() {
       -DLLVM_PARALLEL_LINK_JOBS=${BUILD_THREADS:-4} \
       ${EXTRA_CMAKE_ARGS}
 
-  wrap make -j${BUILD_THREADS:-4} --load-average=${BUILD_THREADS:-4} install
+  wrap make VERBOSE=1 -j${BUILD_THREADS:-4} --load-average=${BUILD_THREADS:-4} install
   popd
 
   pushd ${THIS_DIR}/build-$PACKAGE_STRING/tools/clang
-  wrap make -j${BUILD_THREADS:-4} --load-average=${BUILD_THREADS:-4} install
+  wrap make VERBOSE=1 -j${BUILD_THREADS:-4} --load-average=${BUILD_THREADS:-4} install
   popd
 
   function strip_if_possible() {

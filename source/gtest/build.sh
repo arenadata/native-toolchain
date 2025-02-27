@@ -34,16 +34,16 @@ if needs_build_package ; then
   mkdir -p build_shared
   pushd build_shared
   wrap cmake -DCMAKE_INSTALL_PREFIX=${LOCAL_INSTALL} -DBUILD_SHARED_LIBS=ON ..
-  wrap make -j${BUILD_THREADS:-4}
+  wrap make VERBOSE=1 -j${BUILD_THREADS:-4}
   popd
 
   mkdir -p build_static
   pushd build_static
   wrap cmake -DCMAKE_INSTALL_PREFIX=${LOCAL_INSTALL} ..
-  wrap make -j${BUILD_THREADS:-4}
+  wrap make VERBOSE=1 -j${BUILD_THREADS:-4}
   popd
 
-  # Gtest doesnt provide a install target so we make one
+  # Gtest does not provide a install target so we make one
   mkdir -p $LOCAL_INSTALL/lib
   mkdir -p $LOCAL_INSTALL/include
   install build_shared/libgtest.so build_shared/libgtest_main.so build_static/libgtest.a\
