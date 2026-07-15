@@ -34,6 +34,10 @@ if needs_build_package ; then
   setup_package_build $PACKAGE $PACKAGE_VERSION
   add_gcc_to_ld_library_path
 
+  PATCH_FILE="${THIS_DIR}/glibc-2.36-libarchive-mount-h.patch"
+  if [[ -f "${PATCH_FILE}" ]]; then
+	patch -p1 -N < "${PATCH_FILE}" || test $? -eq 1
+  fi
   # Set KWSYS_PROCESS_USE_SELECT to workaround IMPALA-3191.
   #   NOTE: the CMakeLists.txt in CMake seems to have a bug in which
   #   we have to define two very similar-looking options to get the

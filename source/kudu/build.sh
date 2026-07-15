@@ -81,6 +81,49 @@ function build {
     popd
   fi
 
+
+  # RED OS 8.x + glibc 2.36: mount.h patches for thirdparty (cmake, llvm)
+  # BEFORE needs_build_package — otherwise early return skips copy on checkpoint.
+  if [[ -f /etc/os-release ]]; then
+    # shellcheck disable=SC1091
+    source /etc/os-release
+    if [[ "${ID}" == "redos" && "${VERSION_ID}" =~ ^8 ]]; then
+      echo "RED OS 8.x: applying glibc-2.36 mount.h patches for Kudu thirdparty"
+      mkdir -p "${KUDU_SOURCE_DIR}/thirdparty/patches"
+      for p in cmake-glibc-2.36-libarchive-mount-h.patch \
+               kudu-download-thirdparty-glibc-2.36.patch \
+               llvm-glibc-2.36-mount-h.patch \
+               kudu-download-thirdparty-llvm-glibc-2.36.patch \
+               breakpad-guid-creator-add-cstring.patch \
+               kudu-download-thirdparty-breakpad-cstring.patch \
+               rocksdb-disable-ccache.patch \
+               kudu-download-thirdparty-rocksdb-ccache.patch \
+               kudu-build-definitions-disable-clangd.patch; do
+        [[ -f "${THIS_DIR}/patches/${p}" ]] || \
+          { echo "Missing ${THIS_DIR}/patches/${p}" >&2; exit 1; }
+        cp -f "${THIS_DIR}/patches/${p}" "${KUDU_SOURCE_DIR}/thirdparty/patches/"
+        echo "  copied ${p}"
+      done
+      # Dirty trees may have a half-patched download-thirdparty.sh; reset it
+      # so the stock patches below apply cleanly.
+      pushd "${KUDU_SOURCE_DIR}" >/dev/null
+      git checkout -- thirdparty/download-thirdparty.sh thirdparty/build-definitions.sh
+      popd >/dev/null
+      patch -p1 -N -d "${KUDU_SOURCE_DIR}" \
+        < "${THIS_DIR}/patches/kudu-download-thirdparty-glibc-2.36.patch" || test $? -eq 1
+      patch -p1 -N -d "${KUDU_SOURCE_DIR}" \
+        < "${THIS_DIR}/patches/kudu-download-thirdparty-llvm-glibc-2.36.patch" || test $? -eq 1
+      patch -p1 -N -d "${KUDU_SOURCE_DIR}" \
+        < "${THIS_DIR}/patches/kudu-download-thirdparty-breakpad-cstring.patch" || test $? -eq 1
+      patch -p1 -N -d "${KUDU_SOURCE_DIR}" \
+        < "${THIS_DIR}/patches/kudu-download-thirdparty-rocksdb-ccache.patch" || test $? -eq 1
+      patch -p1 -N -d "${KUDU_SOURCE_DIR}" \
+        < "${THIS_DIR}/patches/kudu-build-definitions-disable-clangd.patch" || test $? -eq 1
+      # Do not wipe llvm/rocksdb/cmake here: download-thirdparty.sh already
+      # re-extracts when patchlevel markers are stale.
+    fi
+  fi
+
   if ! needs_build_package; then
     return
   fi
