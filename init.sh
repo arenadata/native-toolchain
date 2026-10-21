@@ -99,8 +99,9 @@ set -x
 export BUILD_LABEL
 set +x
 
-# Determine the number of build threads
-BUILD_THREADS=$(getconf _NPROCESSORS_ONLN)
+# Determine the number of build threads. A preset value is kept so a
+# memory-heavy package (Kudu's LLVM) can be restarted with fewer jobs.
+: ${BUILD_THREADS:=$(getconf _NPROCESSORS_ONLN)}
 export BUILD_THREADS
 
 # SOURCE DIR for the current script
