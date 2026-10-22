@@ -1,0 +1,10 @@
+--- a/src/common/linux/guid_creator.cc
++++ b/src/common/linux/guid_creator.cc
+@@ -42,6 +42,7 @@
+ #include <sys/stat.h>
+ #include <time.h>
+ #include <unistd.h>
++#include <cstring>
+ 
+ #if defined(HAVE_SYS_RANDOM_H)
+ #include <sys/random.h>

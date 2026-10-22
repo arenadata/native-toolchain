@@ -1,0 +1,17 @@
+--- a/thirdparty/download-thirdparty.sh
++++ b/thirdparty/download-thirdparty.sh
+@@ -491,11 +491,12 @@
+   $RANGER_KMS_SOURCE \
+   $RANGER_KMS_PATCHLEVEL
+ 
+-ROCKSDB_PATCHLEVEL=0
++ROCKSDB_PATCHLEVEL=1
+ fetch_and_patch \
+   $ROCKSDB_NAME.tar.gz \
+   $ROCKSDB_SOURCE \
+-  $ROCKSDB_PATCHLEVEL
++  $ROCKSDB_PATCHLEVEL \
++  "patch -p1 < $TP_DIR/patches/rocksdb-disable-ccache.patch"
+ 
+ echo "---------------"
+ echo "Thirdparty dependencies downloaded successfully"

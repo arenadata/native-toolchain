@@ -1,0 +1,15 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -58,11 +58,7 @@
+     "Default BUILD_TYPE is ${default_build_type}" FORCE)
+ endif()
+ 
+-find_program(CCACHE_FOUND ccache)
+-if(CCACHE_FOUND)
+-  set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+-  set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+-endif(CCACHE_FOUND)
++# ccache is disabled: it breaks the thirdparty build on newer hosts.
+ 
+ option(WITH_JEMALLOC "build with JeMalloc" OFF)
+ option(WITH_LIBURING "build with liburing" ON)
