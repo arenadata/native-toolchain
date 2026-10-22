@@ -1,0 +1,21 @@
+--- a/thirdparty/download-thirdparty.sh
++++ b/thirdparty/download-thirdparty.sh
+@@ -237,7 +237,7 @@
+   return 0
+ }
+ 
+-CMAKE_PATCHLEVEL=1
++CMAKE_PATCHLEVEL=2
+ CMAKE_PATCHES=""
+ if needs_patched_cmake; then \
+  CMAKE_PATCHES="patch -p1 < $TP_DIR/patches/cmake-issue-15873-dont-use-select.patch"
+@@ -247,7 +247,8 @@
+  cmake-${CMAKE_VERSION}.tar.gz \
+  $CMAKE_SOURCE \
+  $CMAKE_PATCHLEVEL \
+- "$CMAKE_PATCHES"
++ "$CMAKE_PATCHES" \
++ "patch -p1 < $TP_DIR/patches/cmake-glibc-2.36-libarchive-mount-h.patch"
+ 
+ SNAPPY_PATCHLEVEL=0
+ fetch_and_patch \

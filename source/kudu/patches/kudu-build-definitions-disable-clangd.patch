@@ -1,0 +1,10 @@
+--- a/thirdparty/build-definitions.sh
++++ b/thirdparty/build-definitions.sh
+@@ -210,6 +210,7 @@
+       CLANG_TOOL_CLANG_OFFLOAD_BUNDLER_BUILD \
+       CLANG_TOOL_CLANG_REFACTOR_BUILD \
+       CLANG_TOOL_CLANG_RENAME_BUILD \
++      CLANG_TOOL_CLANGD_BUILD \
+       CLANG_TOOL_DIAGTOOL_BUILD \
+       COMPILER_RT_BUILD_LIBFUZZER \
+       LLVM_INCLUDE_GO_TESTS \

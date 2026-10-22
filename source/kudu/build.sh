@@ -83,13 +83,14 @@ function build {
 
 
   # glibc >= 2.36: mount.h patches for thirdparty (cmake, llvm).
-  # Ubuntu 24.04 is glibc 2.39, RED OS 8.x is glibc 2.36.
+  # Ubuntu 24.04 is glibc 2.39, RED OS 8.x and Astra 1.8 are glibc 2.36.
   # BEFORE needs_build_package — otherwise early return skips copy on checkpoint.
   if [[ -f /etc/os-release ]]; then
     # shellcheck disable=SC1091
     source /etc/os-release
     if { [[ "${ID}" == "redos" && "${VERSION_ID}" =~ ^8 ]] || \
-         [[ "${ID}" == "ubuntu" && "${VERSION_ID}" =~ ^24 ]]; }; then
+         [[ "${ID}" == "ubuntu" && "${VERSION_ID}" =~ ^24 ]] || \
+         [[ "${ID}" == "astra" && "${VERSION_ID}" =~ ^1\.8 ]]; }; then
       echo "${ID} ${VERSION_ID}: applying glibc-2.36 mount.h patches for Kudu thirdparty"
       mkdir -p "${KUDU_SOURCE_DIR}/thirdparty/patches"
       for p in cmake-glibc-2.36-libarchive-mount-h.patch \
