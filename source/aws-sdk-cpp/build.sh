@@ -33,9 +33,10 @@ if needs_build_package ; then
   export PATH="$CURL_PATH:$PATH"
   wrap ./prefetch_crt_dependency.sh
   export PATH=$ORIGINAL_PATH
-  # Build only the required bedrock components.
+  # Bedrock is required for AWS Bedrock models. Impala's native S3 reader needs the
+  # S3 client (libaws-cpp-sdk-s3) in the same install prefix.
   wrap cmake -DCMAKE_INSTALL_PREFIX=$LOCAL_INSTALL -DCMAKE_BUILD_TYPE=RELEASE \
-    -DBUILD_ONLY="bedrock-runtime" -DENABLE_TESTING="OFF" -DUSE_OPENSSL="ON" \
+    -DBUILD_ONLY="s3;bedrock-runtime" -DENABLE_TESTING="OFF" -DUSE_OPENSSL="ON" \
     -DBUILD_SHARED_LIBS="OFF" -DCPP_STANDARD="17" \
     -DCURL_LIBRARY=${BUILD_DIR}/curl-${CURL_VERSION}/lib/libcurl.so \
     -DCURL_INCLUDE_DIR=${BUILD_DIR}/curl-${CURL_VERSION}/include \
