@@ -113,6 +113,7 @@ export PYTHON_VERSION=2.7.16
 
 THRIFT_VERSION=0.11.0-p5 $SOURCE_DIR/source/thrift/build.sh
 THRIFT_VERSION=0.16.0-p7 $SOURCE_DIR/source/thrift/build.sh
+THRIFT_VERSION=0.24.0-p3 $SOURCE_DIR/source/thrift/build.sh
 
 export -n BOOST_VERSION
 export -n ZLIB_VERSION
